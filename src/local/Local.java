@@ -4,42 +4,35 @@ import java.util.ArrayList;
 
 import compra.Compra;
 import producto.Producto;
+import usuarios.persona.Cliente;
 import usuarios.persona.Encargado;
+import usuarios.persona.Usuario;
 
 public class Local {
 	
 	private String nombre;
 	private ArrayList <Compra> compras = new ArrayList<Compra>();
-	private ArrayList <Producto> productos= new ArrayList<Producto>();
 	private Encargado encargado;
 	
 	public Local(String nombreLocal, Encargado encargado) {
 		this.nombre=nombreLocal;
 		this.encargado=encargado;
 	}	
-	public Boolean cargarProductos(Producto producto) {		
-		if(producto!=null) {
-			productos.add(producto);
-			return true;
-		}
-		return false;
-	}	
-	public Integer buscarStock(Producto producto) {		
-		Integer stock=0;
-		for(Producto aux: productos) {
-			if(aux.getId().equals(producto.getId())) {
-				stock++;
-			}
-		}		
-		return stock;
+	public void agregarCompra(Compra compra) {
+		compras.add(compra);
 	}
-	public ArrayList<Producto> getProductos() {
-		return productos;
+	
+	public  ArrayList<Cliente> buscarComprasPersona(Cliente cliente) {
+	 ArrayList<Cliente> clientes= new ArrayList<Cliente>();
+		for(Compra aux : compras) {			
+			if(aux.getCliente().equals(cliente)) { 
+				clientes.add(cliente);
+			}
+		}
+			
+		return clientes;
 	}
 
-	public void setProductos(ArrayList<Producto> productos) {
-		this.productos = productos;
-	}
 	public Encargado getEncargado() {
 		return this.encargado;
 	}
@@ -57,6 +50,6 @@ public class Local {
 
 	public void setCompras(ArrayList<Compra> compras) {
 		this.compras = compras;
-	}	
+	}
 	
 }

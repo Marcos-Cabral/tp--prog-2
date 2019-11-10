@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import compra.Compra;
+import local.Local;
 import producto.Producto;
 import usuarios.persona.Usuario;
 
@@ -11,12 +12,14 @@ public class Sistema {
 	private String nombre;
 	private ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 	private ArrayList <Compra> compras= new ArrayList<Compra>();
+	private ArrayList <Local> local= new ArrayList<Local>();
+	private Usuario usuarioLogeado;
 	
 	public Sistema (String nombre) {
 		this.nombre=nombre;
 	}	
 	
-	public boolean pagar(Usuario user, Compra compra) {
+	/*public boolean pagar(Usuario user, Compra compra) {
 		for(Usuario aux : usuarios) {
 			if(aux.getPassword().equals(user.getPassword())) {
 				compras.addAll(aux.getCliente().getCompras());
@@ -33,7 +36,7 @@ public class Sistema {
 		}
 		
 		return true;
-	}
+	}*/
 	
 	
 	

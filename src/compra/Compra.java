@@ -3,23 +3,28 @@ package compra;
 import java.util.ArrayList;
 
 import producto.Producto;
+import usuarios.persona.Cliente;
 
 public class Compra {
 	private Integer numeroOrden;
 	private Integer cantidadPuntos;
 	private ArrayList <Producto> productos= new ArrayList<Producto>();
+	private Cliente cliente;
 	
-	public Compra(Integer numeroOrden, Integer cantidadPuntos) {
+	public Compra(Integer numeroOrden, Integer cantidadPuntos,Cliente cliente) {
 		this.numeroOrden = numeroOrden;
 		this.cantidadPuntos = cantidadPuntos;
+		this.cliente=cliente;
+	}	
+	public Cliente getCliente() {
+		return cliente;
 	}
-	
-	public Boolean comprar(Producto producto) {		
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+	public void agregarCompra(Producto producto) {		
 		productos.add(producto);		
-		return true;
-	}
-	
-	
+	}	
 	public Integer calcularCantidadDePuntos() {
 		for(Producto aux : productos) {
 			this.cantidadPuntos+=aux.getValorPuntos();
