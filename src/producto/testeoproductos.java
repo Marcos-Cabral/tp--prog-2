@@ -15,7 +15,7 @@ public class testeoproductos {
 		Assert.assertTrue(refrescos.aniadirleCategoriaAUnProducto(agua));
 		Assert.assertTrue(refrescos.aniadirleCategoriaAUnProducto(coca));			
 	}
-	@Test
+@Test
 	public void testQuetesteaQueMuestraProductosPorCategoria() {
 		Categoria refrescos = new Categoria("refrescos");
 		Producto agua = new Producto(1,33.f,"agua",30,15.f);
@@ -23,7 +23,7 @@ public class testeoproductos {
 		Assert.assertTrue(refrescos.aniadirleCategoriaAUnProducto(agua));
 		Assert.assertTrue(refrescos.aniadirleCategoriaAUnProducto(coca));			
 		refrescos.mostrarProductosPorCategoria();	
-	}	
+	}
 	@Test
 	public void testQueQuitaCategoriaAunProducto() {
 		Categoria refrescos = new Categoria("refrescos");

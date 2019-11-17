@@ -7,30 +7,41 @@ import usuarios.persona.Cliente;
 
 public class Compra {
 	private Integer numeroOrden;
-	private Integer cantidadPuntos;
+	private Float cantidadPuntos;
 	private ArrayList <Producto> productos= new ArrayList<Producto>();
 	private Cliente cliente;
 	
-	public Compra(Integer numeroOrden, Integer cantidadPuntos,Cliente cliente) {
-		this.numeroOrden = numeroOrden;
-		this.cantidadPuntos = cantidadPuntos;
+	public Compra(Float puntos,Cliente cliente, Producto producto) {
+		cantidadPuntos=puntos;
 		this.cliente=cliente;
-	}	
+		this.productos.add(producto);
+	}
+	
+	
 	public Cliente getCliente() {
 		return cliente;
 	}
+
+
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-	public void agregarCompra(Producto producto) {		
+
+
+	public void agregarComprar(Producto producto) {		
 		productos.add(producto);		
-	}	
-	public Integer calcularCantidadDePuntos() {
+	}
+	
+	
+	public Float calcularCantidadDePuntos() {
 		for(Producto aux : productos) {
 			this.cantidadPuntos+=aux.getValorPuntos();
 		}
 		return this.cantidadPuntos;
 	}
+	
+	
+	
 	public Float calcularTotalApagar() {
 		Float total=0.f;
 		for(Producto aux : productos) {
@@ -38,6 +49,15 @@ public class Compra {
 		}
 		return total;
 	}
+	
+	public Float calcularTotalApagarPuntos() {
+		Float total=0.f;
+		for(Producto aux : productos) {
+			total+=aux.getPrecioPuntos();
+		}
+		return total;
+	}
+	
 	public ArrayList<Producto> getProductos() {
 		return productos;
 	}
@@ -54,11 +74,11 @@ public class Compra {
 		this.numeroOrden = numeroOrden;
 	}
 
-	public Integer getCantidadPuntos() {
+	public Float getCantidadPuntos() {
 		return cantidadPuntos;
 	}
 
-	public void setCantidadPuntos(Integer cantidadPuntos) {
+	public void setCantidadPuntos(Float cantidadPuntos) {
 		this.cantidadPuntos = cantidadPuntos;
 	}
 	

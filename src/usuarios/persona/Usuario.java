@@ -8,13 +8,26 @@ public abstract class Usuario {
 	private String apellido;	
 	private String email;
 	private String password;
-	public Usuario(String nombre, String apellido, String email, String password) {
-
+	private Float saldo;
+	private Float puntos;
+	
+	public Usuario(String nombre, String apellido, String email, String password, Float saldo) {
+		this.puntos=0.f;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.email = email;
 		this.password = password;
+		this.saldo = saldo;
 	}
+	
+	public Float getPuntos() {
+		return puntos;
+	}
+
+	public void setPuntos(Float puntos) {
+		this.puntos = puntos;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -39,46 +52,14 @@ public abstract class Usuario {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		return result;
+	public Float getSaldo() {
+		return saldo;
 	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		if (apellido == null) {
-			if (other.apellido != null)
-				return false;
-		} else if (!apellido.equals(other.apellido))
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (nombre == null) {
-			if (other.nombre != null)
-				return false;
-		} else if (!nombre.equals(other.nombre))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		return true;
+	public void setSaldo(Float saldo) {
+		this.saldo = saldo;
 	}
+	
+
+	
 	
 }
