@@ -28,6 +28,7 @@ public class Sistema {
 		Encargado jefe = new Encargado("maxi", "reyes");
 		usuarios = new TreeSet<Usuario>();
 		productos = new TreeSet<Producto>();
+		compras = new TreeSet<Compra>();
 		Producto p1 = new Producto(1, 10, "p1", 10, 10);
 		Producto p2 = new Producto(2, 15, "p2", 15, 20);
 		Producto p3 = new Producto(3, 20, "p3", 20, 30);
@@ -87,17 +88,23 @@ public class Sistema {
 
 	// VER SI ESTA LOGEADO
 	public Boolean cargarProducto(Producto producto) {
-		for (Producto aux : this.productos) {
-			if (aux.getId().equals(producto.getId())) {
-				return false;
+		if (usuarioLogeado()) {
+			if (detectarEncargado(usuarioLogeado)) {
+				for (Producto aux : this.productos) {
+					if (aux.getId().equals(producto.getId())) {
+						return false;
+					}
+				}
+				this.productos.add(producto);
+				return true;
 			}
 		}
-		this.productos.add(producto);
-		return true;
+		
+		return false;
 	}
 
 	public Boolean cargarLocal(Local local) {
-		if (usuarioLogeado()) {
+		if (usuarioLogeado()) { 
 			if (detectarEncargado(usuarioLogeado)) {
 				for (Local aux : this.local) {
 					if (aux.getNombre().equals(local.getNombre())) {
@@ -192,6 +199,12 @@ public class Sistema {
 		}
 	}
 
+	public void mostrarCompras() {
+		for (Compra aux : compras) {
+			System.out.println(aux.toString());
+		}
+	}
+
 	public void mostrarProductos() {
 		if (usuarioLogeado()) {
 			for (Producto aux : productos) {
@@ -202,7 +215,11 @@ public class Sistema {
 		}
 	}
 
-	public Compra comprar(String nombreLocal, Integer id, Integer opcion) throws NoExisteExcepcion {
+	public void agregarCompras(Compra c1) {
+		compras.add(c1);
+	}
+
+	public Compra comprar(String nombreLocal, Integer id, Integer opcion, Integer opcionPago) throws NoExisteExcepcion {
 		Local local = buscarLocal(nombreLocal);
 		if (local != null) {
 			Producto producto = buscarProducto(id);
@@ -211,10 +228,10 @@ public class Sistema {
 					NroOrden++;
 					Compra compra = new Compra(producto.getPrecioPuntos(), this.usuarioLogeado, producto);
 					compra.setNumeroOrden(NroOrden);
-					compras.add(compra);
+					agregarCompras(compra);
 					local.añadirCompra(compra);
-					if (pagar(compra, 1)) {
-						// se paga
+					if (pagar(compra, opcionPago)) {
+						return compra;
 					}
 				} else {
 					cancelarCompra(local, NroOrden);

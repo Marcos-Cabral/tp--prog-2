@@ -6,22 +6,24 @@ import productos.Producto;
 
 
 
-public class Compra {
+public class Compra implements Comparable<Compra> {
 	public  Integer numeroOrden;
 	private Integer cantidadPuntos;
 	private ArrayList <Producto> productos= new ArrayList<Producto>();
-	private Usuario cliente;
+	private Usuario cliente; 
+	 
+	
 	
 	public Integer getNumeroOrden() {
 		return numeroOrden;
 	}
 
-	public  void setNumeroOrden(Integer orden) {
-		this.numeroOrden = orden;
+	public void setNumeroOrden(Integer numeroOrden) {
+		this.numeroOrden = numeroOrden;
 	}
-
+ 
 	public Compra(Integer puntos,Usuario cliente, Producto producto) {
-		cantidadPuntos=puntos;
+		cantidadPuntos=puntos;   
 		this.cliente=(Cliente)cliente;
 		this.productos.add(producto);
 	}	
@@ -76,6 +78,52 @@ public class Compra {
 	public void setCantidadPuntos(Integer cantidadPuntos) {
 		this.cantidadPuntos = cantidadPuntos;
 	}
+
+	
+	
+
+	@Override
+	public String toString() {
+		return "Compra [numeroOrden=" + numeroOrden + ", cantidadPuntos=" + cantidadPuntos + ", productos=" + productos
+				+ ", cliente=" + cliente + "]";
+	}
+	
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((numeroOrden == null) ? 0 : numeroOrden.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Compra other = (Compra) obj;
+		if (numeroOrden == null) {
+			if (other.numeroOrden != null)
+				return false;
+		} else if (!numeroOrden.equals(other.numeroOrden))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(Compra o) {
+		return this.numeroOrden.compareTo(o.getNumeroOrden());
+	}
+	
+	
+
+	
+
 	
 }
 
