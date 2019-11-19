@@ -23,16 +23,29 @@ public class Sistema {
 	private Integer NroOrden = 0;
 	private static Sistema instancia;
 
-	private Sistema(String nombre) {
-		this.nombre = nombre;
+	private Sistema() {
+		this.nombre = "sistema";
+		Encargado jefe = new Encargado("maxi", "reyes");
 		usuarios = new TreeSet<Usuario>();
 		productos = new TreeSet<Producto>();
-		local= new HashSet<Local>();
+		Producto p1 = new Producto(1, 10, "p1", 10, 10);
+		Producto p2 = new Producto(2, 15, "p2", 15, 20);
+		Producto p3 = new Producto(3, 20, "p3", 20, 30);
+		productos.add(p1);
+		productos.add(p2);
+		productos.add(p3);
+		Local l1 = new Local("ezeiza", jefe);
+		Local l2 = new Local("lomas", jefe);
+		Local l3 = new Local("turdera", jefe);
+		local = new HashSet<Local>();
+		local.add(l1);
+		local.add(l2);
+		local.add(l3);
 	}
 
-	public static Sistema getInstancia(String nombre) {
+	public static Sistema getInstancia() {
 		if (instancia == null) {
-			instancia = new Sistema(nombre);
+			instancia = new Sistema();
 		}
 		return instancia;
 	}
@@ -72,36 +85,38 @@ public class Sistema {
 		throw new NoExisteExcepcion("No existe el usuario");
 	}
 
+	// VER SI ESTA LOGEADO
 	public Boolean cargarProducto(Producto producto) {
-		if(detectarEncargado(usuarioLogeado)) {
-			for (Producto aux : this.productos) {
-				if (aux.getId().equals(producto.getId())) {
-					return false;
-				}
+		for (Producto aux : this.productos) {
+			if (aux.getId().equals(producto.getId())) {
+				return false;
 			}
-			this.productos.add(producto);
-			return true;
 		}
-		return false;
+		this.productos.add(producto);
+		return true;
 	}
-	
-	public Boolean cargarLocal(Local local) {
-		if(detectarEncargado(usuarioLogeado)) {
-			for (Local aux : this.local) {
-				if (aux.getNombre().equals(local.getNombre())) {
-					return false;
-				}
-			}
-			this.local.add(local);
-			return true;
-		}
-		return false;
-	}
-	
-	
-	// YA ESTA CREO
-	public Boolean borrarUsuario(Usuario user) throws NoExisteExcepcion {
 
+	public Boolean cargarLocal(Local local) {
+		if (usuarioLogeado()) {
+			if (detectarEncargado(usuarioLogeado)) {
+				for (Local aux : this.local) {
+					if (aux.getNombre().equals(local.getNombre())) {
+						return false;
+					}
+				}
+				this.local.add(local);
+				return true;
+			}
+		} else {
+			System.out.println("Logeese");
+		}
+		return false;
+	}
+
+	// YA ESTA CREO
+	public Boolean borrarUsuario(String email) throws NoExisteExcepcion {
+
+		Usuario user = buscarUsuario(email);
 		if (usuarioLogeado()) {
 			if (detectarEncargado(usuarioLogeado)) {
 				Iterator<Usuario> it = this.usuarios.iterator();
@@ -159,6 +174,32 @@ public class Sistema {
 			return false;
 		}
 
+	}
+
+	public void mostrarUsuarios() {
+		if (usuarioLogeado()) {
+			for (Usuario aux : usuarios) {
+				System.out.println(aux.toString());
+			}
+		}
+	}
+
+	public void mostrarLocales() {
+		if (usuarioLogeado()) {
+			for (Local aux : local) {
+				System.out.println(aux.toString());
+			}
+		}
+	}
+
+	public void mostrarProductos() {
+		if (usuarioLogeado()) {
+			for (Producto aux : productos) {
+				System.out.println(aux.toString());
+			}
+		} else {
+			System.out.println("Logeese");
+		}
 	}
 
 	public Compra comprar(String nombreLocal, Integer id, Integer opcion) throws NoExisteExcepcion {
@@ -266,6 +307,10 @@ public class Sistema {
 		return false;
 	}
 
+	public void registrarAdmin(Usuario user) {
+		usuarios.add(user);
+	}
+
 	public Boolean registrarse(Usuario user) {
 		for (Usuario aux : this.usuarios) {
 			if (aux.getEmail().equals(user.getEmail())) {
@@ -277,12 +322,23 @@ public class Sistema {
 	}
 
 	public static void main(String[] args) {
-		Sistema perfumeria = getInstancia("Perfumeria");
+		Sistema perfumeria = getInstancia();
 		// elegir admin o cliente
 		// sos cliente:
-		Usuario cliente;
+		// Usuario cliente= new Cliente("a","a","a","a",3);
 		// sos admin:
-		Usuario admin1;
+		Usuario admin1 = new Encargado("a", "a");
+		Producto p = new Producto(1, 10, "1", 10, 20);
+
+		perfumeria.registrarse(admin1);
+		try {
+			perfumeria.IngresarAlSistema("admin", "admin");
+		} catch (NoExisteExcepcion e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		perfumeria.cargarProducto(p);
+		perfumeria.mostrarProductos();
 
 	}
 

@@ -97,7 +97,7 @@ public class Local implements Comparable<Local>{
 
 	@Override
 	public String toString() {
-		return "Local [nombre=" + nombre + ", compras=" + compras + ", encargado=" + encargado + "]";
+		return "Local [nombre=" + nombre + "]";
 	}
 
 	@Override
