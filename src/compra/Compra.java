@@ -1,57 +1,60 @@
 package compra;
-
 import java.util.ArrayList;
+import Usuarios.Cliente;
+import Usuarios.Usuario;
+import productos.Producto;
 
-import producto.Producto;
-import usuarios.persona.Cliente;
+
 
 public class Compra {
-	private Integer numeroOrden;
-	private Float cantidadPuntos;
+	public  Integer numeroOrden;
+	private Integer cantidadPuntos;
 	private ArrayList <Producto> productos= new ArrayList<Producto>();
-	private Cliente cliente;
+	private Usuario cliente;
 	
-	public Compra(Float puntos,Cliente cliente, Producto producto) {
-		cantidadPuntos=puntos;
-		this.cliente=cliente;
-		this.productos.add(producto);
-	}
-	
-	
-	public Cliente getCliente() {
-		return cliente;
+	public Integer getNumeroOrden() {
+		return numeroOrden;
 	}
 
+	public  void setNumeroOrden(Integer orden) {
+		this.numeroOrden = orden;
+	}
+
+	public Compra(Integer puntos,Usuario cliente, Producto producto) {
+		cantidadPuntos=puntos;
+		this.cliente=(Cliente)cliente;
+		this.productos.add(producto);
+	}	
+
+	public Usuario getCliente() {
+		return cliente;
+	}
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-
-
+	
 	public void agregarComprar(Producto producto) {		
 		productos.add(producto);		
 	}
 	
-	
-	public Float calcularCantidadDePuntos() {
+	public Integer calcularCantidadDePuntos() {
 		for(Producto aux : productos) {
 			this.cantidadPuntos+=aux.getValorPuntos();
 		}
 		return this.cantidadPuntos;
-	}
+	}		
 	
-	
-	
-	public Float calcularTotalApagar() {
-		Float total=0.f;
+	public Integer calcularTotalApagar() {
+		Integer total=0;
 		for(Producto aux : productos) {
 			total+=aux.getPrecio();
 		}
 		return total;
 	}
 	
-	public Float calcularTotalApagarPuntos() {
-		Float total=0.f;
+	public Integer calcularTotalApagarPuntos() {
+		Integer total=0;
 		for(Producto aux : productos) {
 			total+=aux.getPrecioPuntos();
 		}
@@ -66,20 +69,20 @@ public class Compra {
 		this.productos = productos;
 	}
 
-	public Integer getNumeroOrden() {
-		return numeroOrden;
-	}
-
-	public void setNumeroOrden(Integer numeroOrden) {
-		this.numeroOrden = numeroOrden;
-	}
-
-	public Float getCantidadPuntos() {
+	public Integer getCantidadPuntos() {
 		return cantidadPuntos;
 	}
 
-	public void setCantidadPuntos(Float cantidadPuntos) {
+	public void setCantidadPuntos(Integer cantidadPuntos) {
 		this.cantidadPuntos = cantidadPuntos;
 	}
 	
 }
+
+
+
+
+
+
+
+
