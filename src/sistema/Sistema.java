@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import Excepciones.NoExisteExcepcion;
 import Usuarios.Cliente;
+import Usuarios.Cript;
 import Usuarios.Encargado;
 import Usuarios.Usuario;
 import compra.Compra;
@@ -23,6 +24,7 @@ public class Sistema {
 	private Usuario usuarioLogeado;
 	private Integer NroOrden = 0;
 	private static Sistema instancia;
+	private String encriptPass;
 
 	private Sistema() {
 		this.nombre = "sistema";
@@ -79,8 +81,8 @@ public class Sistema {
 				if (l1.eliminarCompra(nro)) {
 					System.out.println("La compra ha sido cancelada");
 				}
-			} 
-		}else {
+			}
+		} else {
 			System.out.println("No eres un admin");
 		}
 	}
@@ -264,13 +266,13 @@ public class Sistema {
 			}
 		}
 	}
-	
-	public void mostrarComprasUsuario(Set <Compra> comprasUsuario ) {
+
+	public void mostrarComprasUsuario(Set<Compra> comprasUsuario) {
 		for (Compra aux : comprasUsuario) {
 			System.out.println(aux.toString() + "\n");
 		}
 	}
-	
+
 	public void mostrarCompras() {
 		for (Compra aux : compras) {
 			System.out.println(aux.toString() + "\n");
@@ -342,18 +344,20 @@ public class Sistema {
 	public boolean IngresarAlSistema(String email, String password) throws NoExisteExcepcion {
 		if (!usuarioLogeado()) {
 			Usuario online = buscarUsuario(email);
-			if (online.getPassword().equals(password)) {
+			String descrip = Cript.deCript(this.encriptPass, password);
+			if (online.getPassword().equals(password) && password.equals(descrip)) {
+
 				this.usuarioLogeado = online;
 				System.out.println("Logeado");
 				return true;
 			} else {
 				System.out.println("Password incorrecta");
+				return false;
 			}
-		} else {
-			System.out.println("Ya se encuentra en el sistema");
-			return false;
 		}
+		System.out.println("Ya se encuentra en el sistema");
 		return false;
+
 	}
 
 	public boolean salirDelSistema() {
@@ -383,6 +387,7 @@ public class Sistema {
 				return false;
 			}
 		}
+		this.encriptPass = Cript.Cript(user.getPassword());
 		this.usuarios.add(user);
 		return true;
 	}

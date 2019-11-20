@@ -112,10 +112,14 @@ public class ClasePrincipal {
 						password = teclado.next();
 
 						try {
-							sistema.IngresarAlSistema(email, password);
-							if (!sistemaCliente(user, sistema)) {
-								opcion = 1;
+							if(sistema.IngresarAlSistema(email, password)) {
+								if (!sistemaCliente(user, sistema)) {
+									opcion = 1;
+								}
+							}else {
+								break;
 							}
+							
 						} catch (NoExisteExcepcion e) {							
 							System.out.println(e.getMessage());
 							opcion = 1;
