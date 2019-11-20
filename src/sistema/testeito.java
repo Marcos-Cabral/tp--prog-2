@@ -8,9 +8,6 @@ import compra.Compra;
 import local.Local;
 import productos.Producto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,7 +32,86 @@ public class testeito {
 		Producto p = new Producto(1, 10, "1", 10, 20);
 		Assert.assertFalse(perfumeria.cargarProducto(p));
 	}
-
+	@Test
+	public void testQuePruebaSiNoHayUsuarioLogeado(){
+		Sistema perfumeria = Sistema.getInstancia();
+		Usuario cliente= new Cliente("f","f","f","f",3);
+		perfumeria.registrarse(cliente);
+		Assert.assertFalse(perfumeria.usuarioLogeado());
+	}
+	@Test
+	public void testQuePruebaDetectarUnEncargado() {
+		Sistema perfumeria = Sistema.getInstancia();
+		Usuario encargado= new Encargado("a","a");
+		perfumeria.registrarAdmin(encargado);
+		try {
+			perfumeria.IngresarAlSistema("admin", "admin");
+			Assert.assertTrue(perfumeria.detectarEncargado(encargado));
+		} catch (NoExisteExcepcion e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Test
+	public void testQuePruebaDetectarUnEncargadoQueEsUnCliente() {
+		Sistema perfumeria = Sistema.getInstancia();
+		Usuario cliente= new Cliente("r","r","r","r",3);
+		Assert.assertFalse(perfumeria.detectarEncargado(cliente));
+	}
+	@Test
+	public void testQuePruebaSiSalgoDelSistema() throws NoExisteExcepcion {
+		Sistema perfumeria = Sistema.getInstancia();
+		Usuario cliente= new Cliente("f","f","f","f",3);
+		perfumeria.registrarse(cliente);
+		perfumeria.IngresarAlSistema("f", "f");
+		Boolean a = perfumeria.salirDelSistema();
+		Assert.assertTrue(a);
+	}
+	@Test
+	public void testQuePruebaSiNoDelSistema(){
+		Sistema perfumeria = Sistema.getInstancia();
+		Usuario cliente= new Cliente("t","t","t","t",3);
+		try {
+			perfumeria.IngresarAlSistema("t", "t");
+			Boolean a = perfumeria.salirDelSistema();
+			Assert.assertTrue(a);
+		} catch (NoExisteExcepcion e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	@Test
+	public void testQuePruebaSiEncuentraElProducto() throws NoExisteExcepcion{
+		Sistema perfumeria = Sistema.getInstancia();
+		Producto p1 = new Producto(1, 10, "p1", 10, 10);
+		perfumeria.cargarProducto(p1);
+		Assert.assertEquals(p1 ,perfumeria.buscarProducto(1));
+	}
+	@Test(expected = NoExisteExcepcion.class)
+	public void testQuePruebaSiNoEncuentraElProducto() throws NoExisteExcepcion{
+		Sistema perfumeria = Sistema.getInstancia();
+		Producto p1 = new Producto(1, 10, "p1", 10, 10);
+		perfumeria.cargarProducto(p1);
+		perfumeria.buscarProducto(8);
+	}
+	@Test
+	public void testQuePruebaSiEncuentraElLocal() throws NoExisteExcepcion{
+		Sistema perfumeria = Sistema.getInstancia();
+		Encargado jefe = new Encargado("maxi", "reyes");
+		Local l1 = new Local("ezeiza", jefe);
+		perfumeria.cargarLocal(l1);
+		Assert.assertEquals(l1 ,perfumeria.buscarLocal("ezeiza"));
+	}
+	
+	@Test(expected = NoExisteExcepcion.class)
+	public void testQuePruebaSiNoEncuentraElLocal() throws NoExisteExcepcion{
+		Sistema perfumeria = Sistema.getInstancia();
+		Encargado jefe = new Encargado("maxi", "reyes");
+		Local l1 = new Local("ezeiza", jefe);
+		perfumeria.cargarLocal(l1);
+		perfumeria.buscarLocal("tablada");
+	}
 	@Test
 	public void testDeComprarConPlata() {
 		Sistema perfumeria = Sistema.getInstancia();
@@ -56,7 +132,7 @@ public class testeito {
 			Compra esperada = new Compra(10, cliente, p1);
 			esperada.setNumeroOrden(2);
 			perfumeria.salirDelSistema();
-			assertEquals(esperada, c1);
+			Assert.assertEquals(esperada, c1);
 
 		} catch (NoExisteExcepcion e) {
 
