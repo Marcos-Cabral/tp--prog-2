@@ -133,7 +133,7 @@ public class Compra implements Comparable<Compra> {
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo(Compra o) {
 		return this.numeroOrden.compareTo(o.getNumeroOrden());
 	}

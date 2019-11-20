@@ -100,7 +100,6 @@ public class Local implements Comparable<Local>{
 		return "Local [nombre=" + nombre + "]";
 	}
 
-	@Override
 	public int compareTo(Local o) {
 		return this.nombre.compareTo(o.getNombre());
 	}

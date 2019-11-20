@@ -180,7 +180,7 @@ public class ClasePrincipal {
 
 						if (email.equals("admin") && password.equals("admin")) {
 							try {
-								sistema.IngresarAlSistema(email, password);
+								sistema.IngresarAlSistemaAdmin(email, password);
 								if (!sistemaAdmin(admin, sistema)) {
 									opcion = 1;
 								}
@@ -365,6 +365,8 @@ public class ClasePrincipal {
 				while (!sistema.cargarProducto(producto)) {
 					System.out.println("Ingrese un id distinto");
 					id = teclado.nextInt();
+					 producto.setId(id);
+
 				}
 
 				break;
@@ -449,7 +451,9 @@ public class ClasePrincipal {
 					}
 				}while(flag == true);
 					Compra compraHecha = sistema.compra((Cliente)cliente, nombre, idProd);
-					System.out.println(compraHecha);
+					if(compraHecha!=null) {
+						System.out.println(compraHecha);
+					}
 				break;
 			case 4:
 				System.out.println("Ingrese numero de orden");

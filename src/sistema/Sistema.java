@@ -360,6 +360,23 @@ public class Sistema {
 
 	}
 
+	public boolean IngresarAlSistemaAdmin(String email, String password) throws NoExisteExcepcion {
+		if (!usuarioLogeado()) {
+			Usuario online = buscarUsuario(email);			
+			if (online.getPassword().equals(password)) {
+
+				this.usuarioLogeado = online;
+				System.out.println("Logeado");
+				return true;
+			} else {
+				System.out.println("Password incorrecta");
+				return false;
+			}
+		}
+		System.out.println("Ya se encuentra en el sistema");
+		return false;
+
+	}
 	public boolean salirDelSistema() {
 		if (usuarioLogeado()) {// si la persona esta en el sistema
 			usuarioLogeado = null;// lo saco

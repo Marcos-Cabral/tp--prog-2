@@ -88,7 +88,7 @@ public class Producto implements Comparable<Producto>{
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo(Producto o) {
 		return this.id.compareTo(o.getId());
 	}
