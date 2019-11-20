@@ -11,14 +11,16 @@ public class Compra implements Comparable<Compra> {
 	private Integer cantidadPuntos; 
 	private ArrayList <Producto> productos= new ArrayList<Producto>();
 	private Usuario cliente; 
-	private Boolean pago;
-	 
-	public Boolean getPago() {
-		return pago;
+	private Boolean pagado;
+	
+	
+	  
+	public Boolean getPagado() {
+		return pagado;
 	}
 
-	public void setPago(Boolean pago) {
-		this.pago = pago;
+	public void setPagado(Boolean pagado) {
+		this.pagado = pagado;
 	}
 
 	public Integer puntosAFavorDeUsuario() {
@@ -41,6 +43,7 @@ public class Compra implements Comparable<Compra> {
 		cantidadPuntos=puntos;   
 		this.cliente=(Cliente)cliente;
 		this.productos.add(producto);
+		this.pagado=false;
 	}	
 
 	public Usuario getCliente() {

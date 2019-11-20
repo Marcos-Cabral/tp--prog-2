@@ -9,10 +9,10 @@ import Usuarios.Usuario;
 import compra.Compra;
 
 public class Local implements Comparable<Local>{
-	private String nombre; 
+	private String nombre;
 	private Set<Compra> compras = new TreeSet<Compra>();
 	private Encargado encargado;
- 
+
 	public Local(String nombreLocal, Encargado encargado) {
 		this.nombre = nombreLocal;
 		this.encargado = encargado;

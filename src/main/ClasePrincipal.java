@@ -19,11 +19,13 @@ import sistema.Sistema;
 public class ClasePrincipal {
 
 
+	private static Scanner teclado;
+
 	public static void main(String[] args) {
 		Sistema sistema = Sistema.getInstancia();
 		Usuario user = new Cliente("", "", "", "", 0);
 		Usuario admin = new Encargado("", "");
-		Scanner teclado = new Scanner(System.in);
+		teclado = new Scanner(System.in);
 		Integer opcion;
 		do {
 			System.out.println("Bienvenido, antes de entrar al sistema, diganos es 1)Cliente.2)Admin.0)salir");
@@ -114,9 +116,9 @@ public class ClasePrincipal {
 							if (!sistemaCliente(user, sistema)) {
 								opcion = 1;
 							}
-						} catch (NoExisteExcepcion e) {
-							opcion = 1;
+						} catch (NoExisteExcepcion e) {							
 							System.out.println(e.getMessage());
+							opcion = 1;
 						}
 						break;
 					case 3:
@@ -178,9 +180,9 @@ public class ClasePrincipal {
 								if (!sistemaAdmin(admin, sistema)) {
 									opcion = 1;
 								}
-							} catch (NoExisteExcepcion e) {
-								opcion = 1;
+							} catch (NoExisteExcepcion e) {								
 								System.out.println(e.getMessage());
+								opcion = 1;
 							}
 						} else {
 							System.out.println("no es un admin");
@@ -210,12 +212,13 @@ public class ClasePrincipal {
 			System.out.println("1.Mostrar productos");
 			System.out.println("2.Mostrar locales");
 			System.out.println("3.Mostrar usuarios");
-			System.out.println("4.Eliminar usuarios");
-			System.out.println("5.Registrar usuarios");
-			System.out.println("6.Cargar productos");
-			System.out.println("7.Cargar locales");
-			System.out.println("8.Cancelar compra");
-			System.out.println("9.Salir de la sesion");
+			System.out.println("4.Mostrar compras");
+			System.out.println("5.Eliminar usuarios");
+			System.out.println("6.Registrar usuarios");
+			System.out.println("7.Cargar productos");
+			System.out.println("8.Cargar locales");
+			System.out.println("9.Cancelar compra");
+			System.out.println("10.Salir de la sesion");
 			opcion = teclado.nextInt();
 
 			switch (opcion) {
@@ -229,6 +232,15 @@ public class ClasePrincipal {
 				sistema.mostrarUsuarios();
 				break;
 			case 4:
+				Set<Compra>comprasHechas = sistema.getCompras();
+				if(comprasHechas.size()>0) {
+					sistema.mostrarCompras();
+				} else {
+					System.out.println("No hay compras en el sistema");
+				}
+				
+				break;
+			case 5:
 				sistema.mostrarUsuarios();
 				System.out.println("Ingrese el email a eliminar");
 				String email = teclado.next();
@@ -239,7 +251,7 @@ public class ClasePrincipal {
 					System.out.println(e.getMessage());
 				}
 				break;
-			case 5:
+			case 6:
 				System.out.println("Ingrese nombre");
 				String name = teclado.next();
 				System.out.println("Ingrese apellido");
@@ -276,7 +288,8 @@ public class ClasePrincipal {
 				System.out.println("Cliente registrado");
 				break;
 
-			case 6:
+			case 7:
+				sistema.mostrarProductos();
 				System.out.println("Ingrese id");
 				flag = true;
 				Integer id = 0;
@@ -351,7 +364,8 @@ public class ClasePrincipal {
 				}
 
 				break;
-			case 7:
+			case 8:
+				sistema.mostrarLocales();
 				System.out.println("Ingrese nombre de local");
 				String nombre = teclado.next();
 				Local local = new Local(nombre, (Encargado) admin);
@@ -360,7 +374,8 @@ public class ClasePrincipal {
 					nombre = teclado.next();
 				}
 				break;
-			case 8:
+			case 9:
+				sistema.mostrarCompras();
 				System.out.println("Ingrese nombre de local");
 				nombre = teclado.next();
 				
@@ -369,8 +384,7 @@ public class ClasePrincipal {
 					System.out.println("Ingrese el id de la compra");
 					Integer idCompra = teclado.nextInt();
 					sistema.cancelarCompra(localsito, idCompra);
-				} catch (NoExisteExcepcion e) 
-				{
+				} catch (NoExisteExcepcion e){
 					System.out.println(e.getMessage());
 				}catch(InputMismatchException e) 
 				{
@@ -378,29 +392,28 @@ public class ClasePrincipal {
 					teclado.nextLine();continue; 
 				}
 				break;
-			case 9:
+			case 10:
 				sistema.salirDelSistema();
-				opcion = 9;
+				opcion = 10;
 				break;
 			default:
 				System.out.println("Ingrese opcion valida");
 				break;
 			}
-
-		} while (opcion != 9);
+		} while (opcion != 10);
 		return false;
 	}
 
 	public static boolean sistemaCliente(Usuario cliente, Sistema sistema) {
-		Scanner teclado = new Scanner(System.in);
+		Scanner teclado = new Scanner(System.in); 
 		Integer opcion;
 		do {
 			System.out.println("1.Mostrar Productos");
 			System.out.println("2.Mostrar Locales");
 			System.out.println("3.Comprar");
 			System.out.println("4.Pagar");
-			System.out.println("4.Ver mis compras");
-			System.out.println("5.Salir de la sesion");
+			System.out.println("5.Ver mis compras");
+			System.out.println("6.Salir de la sesion");
 			opcion = teclado.nextInt();
 
 			switch (opcion) {
@@ -411,6 +424,7 @@ public class ClasePrincipal {
 				sistema.mostrarLocales();
 				break;
 			case 3:
+				sistema.mostrarLocales();
 				System.out.println("Ingrese nombre del local");
 				String nombre = teclado.next();
 				
@@ -418,7 +432,9 @@ public class ClasePrincipal {
 				Integer idProd = 0;
 				do {
 					try
-					{	System.out.println("Ingrese id del producto");
+					{	
+						sistema.mostrarProductos();
+						System.out.println("Ingrese id del producto");
 						idProd = teclado.nextInt();
 						flag = false;
 					}
@@ -427,10 +443,9 @@ public class ClasePrincipal {
 						System.out.println("Ingrese un numero");
 						teclado.nextLine();continue; 
 					}
-				}while(flag == true);				
-		
-				Compra compraHecha = sistema.compra((Cliente) cliente, nombre, idProd);
-				System.out.println(compraHecha);
+				}while(flag == true);
+					Compra compraHecha = sistema.compra((Cliente)cliente, nombre, idProd);
+					System.out.println(compraHecha);
 				break;
 			case 4:
 				System.out.println("Ingrese numero de orden");
@@ -443,23 +458,18 @@ public class ClasePrincipal {
 					{	
 						nroOrden = teclado.nextInt();
 						compraHecha = sistema.buscarCompra(nroOrden);
-						if(!compraHecha.getPago()) {
-							System.out.println("Ingrese forma de pago: 1.Efectivo, 2.Puntos");
-							formaPago = teclado.nextInt();
-							sistema.pagar((Cliente) cliente, compraHecha, formaPago);
-							flag = false;
-						}else {
-							System.out.println("compra ya paga");
-							flag = false;
-						}
-						
+						System.out.println("Ingrese forma de pago: 1.Efectivo, 2.Puntos");
+						formaPago = teclado.nextInt();
+						sistema.pagar((Cliente)cliente, compraHecha, formaPago);
+						flag = false;
 					}
 					catch(InputMismatchException e) 
 					{
 						System.out.println("Ingrese un numero");
 						teclado.nextLine();continue; 
 					} catch (NoExisteExcepcion e) {
-						System.out.println(e.getMessage());
+						System.out.println("No existe el numero de orden");
+						flag=false;
 					}
 				}while(flag == true);
 	
@@ -467,7 +477,7 @@ public class ClasePrincipal {
 			case 5:
 				Set<Compra> comprasUsuario = sistema.buscarMisComprasEnTodosLosLocales();
 				if(comprasUsuario.size()>0) {
-					System.out.println(comprasUsuario);
+					sistema.mostrarComprasUsuario(comprasUsuario);
 				} else {
 					System.out.println("No posee compras");
 				}

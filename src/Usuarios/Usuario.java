@@ -56,8 +56,7 @@ public abstract class Usuario implements Comparable<Usuario>{
 
 	@Override
 	public String toString() {
-		return "Usuario [nombre=" + nombre + ", apellido=" + apellido + ", email=" + email + ", password=" + password
-				+ "]";
+		return "Usuario [nombre=" + nombre + ", apellido=" + apellido + ", email=" + email + "]";
 	}
 
 	@Override

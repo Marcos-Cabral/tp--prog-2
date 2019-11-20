@@ -15,7 +15,7 @@ import productos.Producto;
 
 public class Sistema {
 	private String nombre;
-	private Set<Usuario> usuarios; 
+	private Set<Usuario> usuarios;
 	private Set<Compra> compras = new TreeSet<Compra>();
 	private Set<Compra> comprasCanceladas = new TreeSet<Compra>();
 	private Set<Local> local;
@@ -54,26 +54,33 @@ public class Sistema {
 	}
 
 	// METODOS DE UN ADMIN
-	public void eliminarCompraSistema(Integer nro) {
+	public boolean eliminarCompraSistema(Integer nro) {
 
 		Iterator<Compra> it = this.compras.iterator();
 		while (it.hasNext()) {
 			Compra aux = it.next();
 			if (aux.getNumeroOrden().equals(nro)) {
-				comprasCanceladas.add(aux);
-				it.remove();
+				if (!aux.getPagado()) {
+					comprasCanceladas.add(aux);
+					it.remove();
+					return true;
+				} else {
+					System.out.println("La compra no se puede cancelar porque ya se pago");
+					return false;
+				}
 			}
 		}
-
+		return false;
 	}
 
 	public void cancelarCompra(Local l1, Integer nro) {
 		if (detectarEncargado(usuarioLogeado)) {
-			eliminarCompraSistema(nro);
-			if (l1.eliminarCompra(nro)) {
-				System.out.println("La compra ha sido cancelada");
-			}
-		} else {
+			if (eliminarCompraSistema(nro)) {
+				if (l1.eliminarCompra(nro)) {
+					System.out.println("La compra ha sido cancelada");
+				}
+			} 
+		}else {
 			System.out.println("No eres un admin");
 		}
 	}
@@ -149,21 +156,21 @@ public class Sistema {
 		throw new NoExisteExcepcion("No existe el usuario");
 	}
 
-	public boolean pagarSaldo(Cliente c1,Compra compra) {
-		if (usuarioLogeado instanceof Cliente) {			
-			System.out.println("saldo:"+c1.getSaldo());
+	public boolean pagarSaldo(Cliente c1, Compra compra) {
+		if (usuarioLogeado instanceof Cliente) {
+			System.out.println("saldo:" + c1.getSaldo());
 			Integer total = c1.getSaldo();
 			if (total >= compra.calcularTotalApagar()) {
-				Integer puntosDeEstaCompra=compra.puntosAFavorDeUsuario();
+				Integer puntosDeEstaCompra = compra.puntosAFavorDeUsuario();
 				c1.setPuntos(puntosDeEstaCompra);
 				Integer saldoFinal = total - compra.calcularTotalApagar();
 				c1.setSaldo(saldoFinal);
-				compra.setPago(true);
+				compra.setPagado(true);
 				System.out.println("Pago con efectivo sin problemas");
-				System.out.println("Su saldo actual es de "+c1.getSaldo());
+				System.out.println("Su saldo actual es de " + c1.getSaldo());
 				return true;
 			} else {
-				compra.setPago(false);
+				compra.setPagado(false);
 				System.out.println("No posee saldo suficiente");
 				return false;
 			}
@@ -171,21 +178,20 @@ public class Sistema {
 		System.out.println("no es cliente");
 		return false;
 	}
-	
-	public boolean pagarPuntos(Cliente c1,Compra compra) {
+
+	public boolean pagarPuntos(Cliente c1, Compra compra) {
 		if (usuarioLogeado instanceof Cliente) {
-			System.out.println("Puntos:"+c1.getPuntos());
+			System.out.println("Puntos:" + c1.getPuntos());
 			Integer total = c1.getPuntos();
 			if (total >= compra.calcularTotalApagarPuntos()) {
 				Integer saldoFinal = total - compra.calcularTotalApagar();
 				c1.setPuntos(saldoFinal);
-				
-				compra.setPago(true);
+				compra.setPagado(true);
 				System.out.println("Pago con puntos sin problemas");
-				System.out.println("sus puntos actuales son: "+c1.getPuntos());
+				System.out.println("sus puntos actuales son: " + c1.getPuntos());
 				return true;
 			} else {
-				compra.setPago(false);
+				compra.setPagado(false);
 				System.out.println("No posee puntos suficiente");
 				System.out.println("Los puntos se ganan comprando con dinero");
 				return false;
@@ -196,47 +202,53 @@ public class Sistema {
 	}
 
 	// CLIENTE
-	public boolean pagar(Cliente c1,Compra compra, Integer pago) {
-		if (pago == 1) { 
-			if(!pagarSaldo(c1,compra)) {
-				return false; 
-			} 
-		} else if(pago == 2){
-			if(!pagarPuntos(c1,compra)) {
-				return false;
+	public boolean pagar(Cliente c1, Compra compra, Integer pago) {
+		if (!compra.getPagado()) {
+
+			if (pago == 1) {
+				if (!pagarSaldo(c1, compra)) {
+					return false;
+				}
+			} else if (pago == 2) {
+				if (!pagarPuntos(c1, compra)) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
+		System.out.println("Ya habia pagado esa compra");
+		return false;
 	}
-	public Compra compra(Cliente c1,String nombreLocal, Integer id) {
-		Compra compra; 
-		try {			
-			Local local= buscarLocal(nombreLocal);
-			Producto producto=buscarProducto(id);
+
+	public Compra compra(Cliente c1, String nombreLocal, Integer id) {
+		Compra compra;
+		try {
+			Local local = buscarLocal(nombreLocal);
+			Producto producto = buscarProducto(id);
 			NroOrden++;
 			compra = new Compra(producto.getPrecioPuntos(), c1, producto);
 			compra.setNumeroOrden(NroOrden);
-			compras.add(compra);
 			agregarCompras(compra);
 			local.añadirCompra(compra);
+			compra.setPagado(false);
 			return compra;
 		} catch (NoExisteExcepcion e) {
 			System.out.println(e.getMessage());
-		}		
+		}
 		return null;
 	}
-	
-	public Compra buscarCompra(Integer nro)throws NoExisteExcepcion {
-			Iterator<Compra> it = this.compras.iterator();
-			while (it.hasNext()) {
-				Compra aux = it.next();
-				if (aux.getNumeroOrden().equals(nro)) {
-					return aux;
-				}
+
+	public Compra buscarCompra(Integer nro) throws NoExisteExcepcion {
+		Iterator<Compra> it = this.compras.iterator();
+		while (it.hasNext()) {
+			Compra aux = it.next();
+			if (aux.getNumeroOrden().equals(nro)) {
+				return aux;
 			}
-			throw new NoExisteExcepcion("No existe el producto");
+		}
+		throw new NoExisteExcepcion("No existe el producto");
 	}
-	
+
 	public void mostrarUsuarios() {
 		if (usuarioLogeado()) {
 			for (Usuario aux : usuarios) {
@@ -252,10 +264,16 @@ public class Sistema {
 			}
 		}
 	}
-
+	
+	public void mostrarComprasUsuario(Set <Compra> comprasUsuario ) {
+		for (Compra aux : comprasUsuario) {
+			System.out.println(aux.toString() + "\n");
+		}
+	}
+	
 	public void mostrarCompras() {
 		for (Compra aux : compras) {
-			System.out.println(aux.toString());
+			System.out.println(aux.toString() + "\n");
 		}
 	}
 
@@ -373,10 +391,11 @@ public class Sistema {
 		return comprasCanceladas;
 	}
 
+	public Set<Compra> getCompras() {
+		return compras;
+	}
+
 	public void setComprasCanceladas(Set<Compra> comprasCanceladas) {
 		this.comprasCanceladas = comprasCanceladas;
 	}
-
-	
-
 }
