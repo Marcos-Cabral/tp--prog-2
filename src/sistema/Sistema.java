@@ -15,8 +15,9 @@ import productos.Producto;
 
 public class Sistema {
 	private String nombre;
-	private Set<Usuario> usuarios;
+	private Set<Usuario> usuarios; 
 	private Set<Compra> compras = new TreeSet<Compra>();
+	private Set<Compra> comprasCanceladas = new TreeSet<Compra>();
 	private Set<Local> local;
 	private Set<Producto> productos;
 	private Usuario usuarioLogeado;
@@ -29,6 +30,7 @@ public class Sistema {
 		usuarios = new TreeSet<Usuario>();
 		productos = new TreeSet<Producto>();
 		compras = new TreeSet<Compra>();
+		comprasCanceladas = new TreeSet<Compra>();
 		Producto p1 = new Producto(1, 10, "p1", 10, 10);
 		Producto p2 = new Producto(2, 15, "p2", 15, 20);
 		Producto p3 = new Producto(3, 20, "p3", 20, 30);
@@ -58,6 +60,7 @@ public class Sistema {
 		while (it.hasNext()) {
 			Compra aux = it.next();
 			if (aux.getNumeroOrden().equals(nro)) {
+				comprasCanceladas.add(aux);
 				it.remove();
 			}
 		}
@@ -99,12 +102,12 @@ public class Sistema {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
 	public Boolean cargarLocal(Local local) {
-		if (usuarioLogeado()) { 
+		if (usuarioLogeado()) {
 			if (detectarEncargado(usuarioLogeado)) {
 				for (Local aux : this.local) {
 					if (aux.getNombre().equals(local.getNombre())) {
@@ -146,43 +149,94 @@ public class Sistema {
 		throw new NoExisteExcepcion("No existe el usuario");
 	}
 
-	// CLIENTE
-	public boolean pagar(Compra compra, Integer pago) {
-		Cliente cliente = (Cliente) compra.getCliente();
-		if (pago == 1) { // 1 para pagar con saldo
-			Integer total = cliente.getSaldo();
-
-			if (total >= compra.calcularTotalApagar()) { // si te alcanza para pagar
-				Integer saldoFinal = total - compra.calcularTotalApagar(); // al total que tengo le resto lo que hay que
-																			// pagar
-				cliente.setSaldo(saldoFinal);
-				System.out.println("Pago sin problemas");
-				return true; // se pago bien con saldo
-			} else {
-				System.out.println("No posee saldo suficiente");
-				return false; // no hay plata
-			}
-		} else {
-			Integer puntos = cliente.getPuntos();// asigno los puntos que tengo
-
-			if (puntos >= compra.calcularTotalApagarPuntos()) {// veo si los puntos que tengo son mayor a lo que me sale
-																// pagar en puntos
-				Integer puntosFinales = puntos - compra.calcularTotalApagarPuntos();// saco los puntos de la compra a
-																					// los
-																					// puntos que ya tengo
-				Integer puntosGanados = compra.calcularCantidadDePuntos() + puntosFinales;// a esos puntos le agrego lo
-																							// ganado por la compra
-				cliente.setSaldo(puntosGanados);// se lo asigno a el saldo
-
-				System.out.println("pago sin problemas");
+	public boolean pagarSaldo(Cliente c1,Compra compra) {
+		if (usuarioLogeado instanceof Cliente) {			
+			System.out.println("saldo:"+c1.getSaldo());
+			Integer total = c1.getSaldo();
+			if (total >= compra.calcularTotalApagar()) {
+				Integer puntosDeEstaCompra=compra.puntosAFavorDeUsuario();
+				c1.setPuntos(puntosDeEstaCompra);
+				Integer saldoFinal = total - compra.calcularTotalApagar();
+				c1.setSaldo(saldoFinal);
+				compra.setPago(true);
+				System.out.println("Pago con efectivo sin problemas");
+				System.out.println("Su saldo actual es de "+c1.getSaldo());
 				return true;
+			} else {
+				compra.setPago(false);
+				System.out.println("No posee saldo suficiente");
+				return false;
 			}
-			System.out.println("puntos insuficientes");
-			return false;
 		}
-
+		System.out.println("no es cliente");
+		return false;
+	}
+	
+	public boolean pagarPuntos(Cliente c1,Compra compra) {
+		if (usuarioLogeado instanceof Cliente) {
+			System.out.println("Puntos:"+c1.getPuntos());
+			Integer total = c1.getPuntos();
+			if (total >= compra.calcularTotalApagarPuntos()) {
+				Integer saldoFinal = total - compra.calcularTotalApagar();
+				c1.setPuntos(saldoFinal);
+				
+				compra.setPago(true);
+				System.out.println("Pago con puntos sin problemas");
+				System.out.println("sus puntos actuales son: "+c1.getPuntos());
+				return true;
+			} else {
+				compra.setPago(false);
+				System.out.println("No posee puntos suficiente");
+				System.out.println("Los puntos se ganan comprando con dinero");
+				return false;
+			}
+		}
+		System.out.println("no es cliente");
+		return false;
 	}
 
+	// CLIENTE
+	public boolean pagar(Cliente c1,Compra compra, Integer pago) {
+		if (pago == 1) { 
+			if(!pagarSaldo(c1,compra)) {
+				return false; 
+			} 
+		} else if(pago == 2){
+			if(!pagarPuntos(c1,compra)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	public Compra compra(Cliente c1,String nombreLocal, Integer id) {
+		Compra compra; 
+		try {			
+			Local local= buscarLocal(nombreLocal);
+			Producto producto=buscarProducto(id);
+			NroOrden++;
+			compra = new Compra(producto.getPrecioPuntos(), c1, producto);
+			compra.setNumeroOrden(NroOrden);
+			compras.add(compra);
+			agregarCompras(compra);
+			local.añadirCompra(compra);
+			return compra;
+		} catch (NoExisteExcepcion e) {
+			System.out.println(e.getMessage());
+		}		
+		return null;
+	}
+	
+	public Compra buscarCompra(Integer nro)throws NoExisteExcepcion {
+			Iterator<Compra> it = this.compras.iterator();
+			while (it.hasNext()) {
+				Compra aux = it.next();
+				if (aux.getNumeroOrden().equals(nro)) {
+					return aux;
+				}
+			}
+			throw new NoExisteExcepcion("No existe el producto");
+	}
+	
 	public void mostrarUsuarios() {
 		if (usuarioLogeado()) {
 			for (Usuario aux : usuarios) {
@@ -217,29 +271,6 @@ public class Sistema {
 
 	public void agregarCompras(Compra c1) {
 		compras.add(c1);
-	}
-
-	public Compra comprar(String nombreLocal, Integer id, Integer opcion, Integer opcionPago) throws NoExisteExcepcion {
-		Local local = buscarLocal(nombreLocal);
-		if (local != null) {
-			Producto producto = buscarProducto(id);
-			if (producto != null) {
-				if (opcion == 1) {
-					NroOrden++;
-					Compra compra = new Compra(producto.getPrecioPuntos(), this.usuarioLogeado, producto);
-					compra.setNumeroOrden(NroOrden);
-					agregarCompras(compra);
-					local.añadirCompra(compra);
-					if (pagar(compra, opcionPago)) {
-						return compra;
-					}
-				} else {
-					cancelarCompra(local, NroOrden);
-				}
-			}
-		}
-
-		return null;
 	}
 
 	public Set<Compra> buscarMisComprasEnTodosLosLocales() {
@@ -338,25 +369,14 @@ public class Sistema {
 		return true;
 	}
 
-	public static void main(String[] args) {
-		Sistema perfumeria = getInstancia();
-		// elegir admin o cliente
-		// sos cliente:
-		// Usuario cliente= new Cliente("a","a","a","a",3);
-		// sos admin:
-		Usuario admin1 = new Encargado("a", "a");
-		Producto p = new Producto(1, 10, "1", 10, 20);
-
-		perfumeria.registrarse(admin1);
-		try {
-			perfumeria.IngresarAlSistema("admin", "admin");
-		} catch (NoExisteExcepcion e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		perfumeria.cargarProducto(p);
-		perfumeria.mostrarProductos();
-
+	public Set<Compra> getComprasCanceladas() {
+		return comprasCanceladas;
 	}
+
+	public void setComprasCanceladas(Set<Compra> comprasCanceladas) {
+		this.comprasCanceladas = comprasCanceladas;
+	}
+
+	
 
 }

@@ -8,11 +8,26 @@ import productos.Producto;
 
 public class Compra implements Comparable<Compra> {
 	public  Integer numeroOrden;
-	private Integer cantidadPuntos;
+	private Integer cantidadPuntos; 
 	private ArrayList <Producto> productos= new ArrayList<Producto>();
 	private Usuario cliente; 
+	private Boolean pago;
 	 
-	
+	public Boolean getPago() {
+		return pago;
+	}
+
+	public void setPago(Boolean pago) {
+		this.pago = pago;
+	}
+
+	public Integer puntosAFavorDeUsuario() {
+		Integer puntos=0;
+		for(Producto aux : productos) {
+			puntos+=aux.getPrecioPuntos();
+		}
+		return puntos;
+	}
 	
 	public Integer getNumeroOrden() {
 		return numeroOrden;
@@ -21,7 +36,7 @@ public class Compra implements Comparable<Compra> {
 	public void setNumeroOrden(Integer numeroOrden) {
 		this.numeroOrden = numeroOrden;
 	}
- 
+  
 	public Compra(Integer puntos,Usuario cliente, Producto producto) {
 		cantidadPuntos=puntos;   
 		this.cliente=(Cliente)cliente;
@@ -56,7 +71,7 @@ public class Compra implements Comparable<Compra> {
 	}
 	
 	public Integer calcularTotalApagarPuntos() {
-		Integer total=0;
+		Integer total=0; 
 		for(Producto aux : productos) {
 			total+=aux.getPrecioPuntos();
 		}

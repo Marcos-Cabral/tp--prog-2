@@ -6,7 +6,8 @@ public class Cliente extends Usuario{
 	
 	public Cliente(String nombre, String apellido, String email, String password,Integer saldo) {
 		super(nombre, apellido, email, password);
-		this.saldo=saldo;
+		this.saldo=saldo; 
+		this.puntos=0;
 	}
 
 	public Integer getPuntos() {

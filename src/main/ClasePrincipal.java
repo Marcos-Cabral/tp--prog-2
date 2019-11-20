@@ -1,6 +1,7 @@
 package main;
 
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
@@ -26,14 +27,46 @@ public class ClasePrincipal {
 		Integer opcion;
 		do {
 			System.out.println("Bienvenido, antes de entrar al sistema, diganos es 1)Cliente.2)Admin.0)salir");
-			opcion = teclado.nextInt();
-			if (opcion == 1) {
+			
+			boolean flag = true;
+			opcion = 9;
+			do {
+				try
+				{
+					opcion = teclado.nextInt();
+					flag = false;
+				}
+				catch(InputMismatchException e) 
+				{
+					System.out.println("Ingrese un numero");
+					teclado.nextLine();continue; 
+				}
+			}while(flag == true);
+
+				
+			if(opcion == 1) {
 				System.out.println("Usted ingreso al sistema de clientes");
 				do {
 					System.out.println("1.Registrarse");
 					System.out.println("2.Logearse");
 					System.out.println("3.Cerrar sistema");
-					opcion = teclado.nextInt();
+					
+					
+					flag = true;
+					opcion = 9;
+					do {
+						try
+						{
+							opcion = teclado.nextInt();
+							flag = false;
+						}
+						catch(InputMismatchException e) 
+						{
+							System.out.println("Ingrese un numero");
+							teclado.nextLine();continue; 
+						}
+					}while(flag == true);
+					
 					switch (opcion) {
 					case 1:
 						System.out.println("Ingrese nombre");
@@ -45,7 +78,22 @@ public class ClasePrincipal {
 						System.out.println("Ingrese contrasenia");
 						String password = teclado.next();
 						System.out.println("Ingrese saldo");
-						Integer saldo = teclado.nextInt();
+						
+						flag = true;
+						Integer saldo = 0;
+						do {
+							try
+							{	
+								saldo = teclado.nextInt();
+								flag = false;
+							}
+							catch(InputMismatchException e) 
+							{
+								System.out.println("Ingrese un numero");
+								teclado.nextLine();continue; 
+							}
+						}while(flag == true);
+						
 						user = new Cliente(name, subname, email, password, saldo);
 						while (!sistema.registrarse(user)) {
 							System.out.println("Ingrese otro email");
@@ -87,7 +135,24 @@ public class ClasePrincipal {
 					System.out.println("1.Registrarse");
 					System.out.println("2.Logearse");
 					System.out.println("4.Salir");
-					opcion = teclado.nextInt();
+					
+					flag = true;
+					opcion = 9;
+					do {
+						try
+						{
+							opcion = teclado.nextInt();
+							flag = false;
+						}
+						catch(InputMismatchException e) 
+						{
+							System.out.println("Ingrese un numero");
+							teclado.nextLine();continue; 
+						}
+					}while(flag == true);
+
+					
+					
 					switch (opcion) {
 					case 1:
 						System.out.println("Ingrese nombre");
@@ -183,8 +248,22 @@ public class ClasePrincipal {
 				email = teclado.next();
 				System.out.println("Ingrese contrasenia");
 				String password = teclado.next();
+				
 				System.out.println("Ingrese saldo");
-				Integer saldo = teclado.nextInt();
+				Boolean flag = true;
+				Integer saldo = 0;
+				do {
+					try
+					{	
+						saldo = teclado.nextInt();
+						flag = false;
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					}
+				}while(flag == true);
 
 				Usuario user = new Cliente(name, subname, email, password, saldo);
 
@@ -199,16 +278,72 @@ public class ClasePrincipal {
 
 			case 6:
 				System.out.println("Ingrese id");
-				Integer id = teclado.nextInt();
+				flag = true;
+				Integer id = 0;
+				do {
+					try
+					{	
+						id = teclado.nextInt();
+						flag = false;
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					}
+				}while(flag == true);
+				
 				System.out.println("Ingrese precio");
-				Integer precio = teclado.nextInt();
+				
+				flag = true;
+				Integer precio = 0;
+				do {
+					try
+					{	
+						precio = teclado.nextInt();
+						flag = false;
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					}
+				}while(flag == true);
 				System.out.println("Ingrese descripion");
 				String descripcion = teclado.next();
 				System.out.println("Ingrese valor puntos");
-				Integer valor = teclado.nextInt();
+				flag = true;
+				Integer valor = 0;
+				do {
+					try
+					{	
+						valor = teclado.nextInt();
+						flag = false;
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					}
+				}while(flag == true);
+				
 				System.out.println("Ingrese precio puntos");
-				Integer preciop = teclado.nextInt();
-				Producto producto = new Producto(id, precio, descripcion, valor, precio);
+				flag = true;
+				Integer preciop = 0;
+				do {
+					try
+					{	
+						preciop = teclado.nextInt();
+						flag = false;
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					}
+				}while(flag == true);
+				
+				Producto producto = new Producto(id, precio, descripcion, valor, preciop);
 
 				while (!sistema.cargarProducto(producto)) {
 					System.out.println("Ingrese un id distinto");
@@ -226,6 +361,22 @@ public class ClasePrincipal {
 				}
 				break;
 			case 8:
+				System.out.println("Ingrese nombre de local");
+				nombre = teclado.next();
+				
+				try {
+					Local localsito = sistema.buscarLocal(nombre);
+					System.out.println("Ingrese el id de la compra");
+					Integer idCompra = teclado.nextInt();
+					sistema.cancelarCompra(localsito, idCompra);
+				} catch (NoExisteExcepcion e) 
+				{
+					System.out.println(e.getMessage());
+				}catch(InputMismatchException e) 
+				{
+					System.out.println("Ingrese un numero");
+					teclado.nextLine();continue; 
+				}
 				break;
 			case 9:
 				sistema.salirDelSistema();
@@ -248,8 +399,8 @@ public class ClasePrincipal {
 			System.out.println("2.Mostrar Locales");
 			System.out.println("3.Comprar");
 			System.out.println("4.Pagar");
-			System.out.println("5.Ver mis compras");
-			System.out.println("6.Salir de la sesion");
+			System.out.println("4.Ver mis compras");
+			System.out.println("5.Salir de la sesion");
 			opcion = teclado.nextInt();
 
 			switch (opcion) {
@@ -260,10 +411,66 @@ public class ClasePrincipal {
 				sistema.mostrarLocales();
 				break;
 			case 3:
+				System.out.println("Ingrese nombre del local");
+				String nombre = teclado.next();
+				
+				Boolean flag = true;
+				Integer idProd = 0;
+				do {
+					try
+					{	System.out.println("Ingrese id del producto");
+						idProd = teclado.nextInt();
+						flag = false;
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					}
+				}while(flag == true);				
+		
+				Compra compraHecha = sistema.compra((Cliente) cliente, nombre, idProd);
+				System.out.println(compraHecha);
 				break;
 			case 4:
+				System.out.println("Ingrese numero de orden");
+				
+				flag = true;
+				Integer nroOrden = 0;
+				Integer formaPago = 0;
+				do {
+					try
+					{	
+						nroOrden = teclado.nextInt();
+						compraHecha = sistema.buscarCompra(nroOrden);
+						if(!compraHecha.getPago()) {
+							System.out.println("Ingrese forma de pago: 1.Efectivo, 2.Puntos");
+							formaPago = teclado.nextInt();
+							sistema.pagar((Cliente) cliente, compraHecha, formaPago);
+							flag = false;
+						}else {
+							System.out.println("compra ya paga");
+							flag = false;
+						}
+						
+					}
+					catch(InputMismatchException e) 
+					{
+						System.out.println("Ingrese un numero");
+						teclado.nextLine();continue; 
+					} catch (NoExisteExcepcion e) {
+						System.out.println(e.getMessage());
+					}
+				}while(flag == true);
+	
 				break;
 			case 5:
+				Set<Compra> comprasUsuario = sistema.buscarMisComprasEnTodosLosLocales();
+				if(comprasUsuario.size()>0) {
+					System.out.println(comprasUsuario);
+				} else {
+					System.out.println("No posee compras");
+				}
 				break;
 			case 6:
 				sistema.salirDelSistema();
@@ -273,7 +480,6 @@ public class ClasePrincipal {
 				System.out.println("Ingrese opcion valida");
 				break;
 			}
-
 		} while (opcion != 6);
 		return false;
 	}
